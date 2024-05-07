@@ -10,7 +10,6 @@ SoftwareSerial COM(4,5);
 float signal = WiFi.RSSI();
 char  lectura;
 char  lectura2 [6];
-char  lectura3 [9];
 void setup() {
   Serial.begin(9600);
   COM.begin(9600);
