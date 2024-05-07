@@ -15,7 +15,7 @@ int lectura13;
 int lectura14;
 int lectura15;
 String text;
-String  s = "-";
+String  s = ".";
 SoftwareSerial AR(2,3);
 
 void setup() {
