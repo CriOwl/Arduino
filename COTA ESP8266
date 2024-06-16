@@ -1,0 +1,70 @@
+#include <SoftwareSerial.h>
+#include <ESP8266httpUpdate.h>
+#include <ESP8266HTTPClient.h>
+#include <WiFiManager.h>
+#include <strings_en.h>
+#include <wm_consts_en.h>
+#include <wm_strings_es.h>
+#include <ESP8266WiFi.h>
+#include <ESP8266WebServer.h>
+#include <DNSServer.h>
+#include <ArduinoJson.h>
+#include <ArduinoJson.hpp>
+
+SoftwareSerial COM(4,5);
+JsonDocument doc;
+const char* api = "https://pd7lfvnudi.execute-api.us-east-1.amazonaws.com/dev/ingreso/webhook"; // URL deL API
+void setup() {
+  Serial.begin(9600);
+  DynamicJsonDocument doc(1024);
+  COM.begin(9600);
+  WiFiManager wifiManager;
+  /*wifiManager.resetSettings();*/
+  wifiManager.autoConnect ("Dataloger","123456789");
+  Serial.println("Ya estas conectado");
+
+}
+void loop() {
+  String json = COM.readStringUntil('\n');
+  deserializeJson(doc, json);
+  const char* lecturaD = doc["lectura_D"];
+  byte L1= doc["Pines digitales"][0];
+  byte L2= doc["Pines digitales"][1];
+  byte L3= doc["Pines digitales"][2];
+  byte L4= doc["Pines digitales"][3];
+  byte L5= doc["Pines digitales"][4];
+  byte L6= doc["Pines digitales"][5];
+  byte L7= doc["Pines digitales"][6];
+  byte L8= doc["Pines digitales"][7];
+  byte L9= doc["Pines digitales"][8];
+  byte L10= doc["Pines digitales"][9];
+  const char* lecturaA = doc["lectura_A"];
+  byte AN1= doc["Pines digitales"][0];
+  byte AN2= doc["Pines digitales"][1];
+  byte AN3= doc["Pines digitales"][2];
+  byte AN4= doc["Pines digitales"][3];
+  byte AN5= doc["Pines digitales"][4];
+  sendDataToApi(json);
+ delay(1000);
+}
+void sendDataToApi(String json) {
+  WiFiClient client;
+  HTTPClient http;
+  String url = String(api);
+  Serial.println("URL de solicitud: " + url);
+  http.begin(client, api);
+  http.addHeader("Content-Type", "application/json");
+  int httpCode = http.POST(json);
+ if (httpCode > 0) {
+    if (httpCode == HTTP_CODE_OK) {
+      String payload = http.getString();
+      Serial.println("Respuesta recibida: " + payload);
+    } else {
+      Serial.println("Error en la solicitud. Código de error: " + String(httpCode));
+    }
+  } else {
+    Serial.println("Error en la conexión");
+  }
+  http.end();
+  }
+
