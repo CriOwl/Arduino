@@ -1,0 +1,68 @@
+#include <SoftwareSerial.h>
+#include <ArduinoJson.h>
+#include <ArduinoJson.hpp>
+JsonDocument doc;
+int contador;
+byte digital_0,digital_1,digital_2,digital_3,digital_4,digital_5,digital_6,digital_7,digital_8,digital_9;
+SoftwareSerial ESP8266 (2,3);
+void setup() {
+Serial.begin(9600);
+ESP8266.begin(9600);
+DynamicJsonDocument doc(1024);
+pinMode(4,INPUT);
+pinMode(5,INPUT);
+pinMode(6,INPUT);
+pinMode(7,INPUT);
+pinMode(8,INPUT);
+pinMode(9,INPUT);
+pinMode(10,INPUT);
+pinMode(11,INPUT);
+pinMode(12,INPUT);
+pinMode(13,INPUT);
+pinMode(A8,INPUT);
+pinMode(A9,INPUT);
+pinMode(A10,INPUT);
+pinMode(A11,INPUT);
+pinMode(A12,INPUT);
+
+}
+
+void loop() {
+  byte digital_0=2,digital_1=0,digital_2=0,digital_3=0,digital_4=0,digital_5=0,digital_6=0,digital_7=0,digital_8=0,digital_9=0;
+  for(contador=1;contador<=10;contador++){
+  byte digital_0 = digital_0+digitalRead(4);
+  byte digital_1 = digital_1+digitalRead(5);
+  byte digital_2 = digital_2+digitalRead(6);
+  byte digital_3 = digital_3+digitalRead(7);
+  byte digital_4 = digital_4+digitalRead(8);
+  byte digital_5 = digital_5+digitalRead(9);
+  byte digital_6 = digital_6+digitalRead(10);
+  byte digital_7 = digital_7+digitalRead(11);
+  byte digital_8 = digital_8+digitalRead(12);
+  byte digital_9 = digital_9+digitalRead(13);
+  delay(100);
+  }
+JsonArray lectura_D = doc.createNestedArray("Pines digitales"); //Agregar rev/s a un json con una tasa de actualizacion de 100 ms
+  lectura_D.add(digital_0);
+  lectura_D.add(digital_1);
+  lectura_D.add(digital_2);
+  lectura_D.add(digital_3);
+  lectura_D.add(digital_4);
+  lectura_D.add(digital_5);
+  lectura_D.add(digital_6);
+  lectura_D.add(digital_7);
+  lectura_D.add(digital_8);
+  lectura_D.add(digital_9);
+JsonArray lectura_A = doc.createNestedArray("Pines Analogicos");
+  lectura_A.add(analogRead(A8));
+  lectura_A.add(analogRead(A9));
+  lectura_A.add(analogRead(A10));
+  lectura_A.add(analogRead(A11));
+  lectura_A.add(analogRead(A12));
+  serializeJson(doc,ESP8266);
+  ESP8266.println();
+  serializeJson(doc,Serial);
+  Serial.println();
+
+}
+
